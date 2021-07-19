@@ -2,7 +2,7 @@
 
 ### Introduction
 	This is a web application showing the *KPI* of companies (fake) using a React front-end & a Spring Boot backend.  
-[Rumble charts](https://rumble-charts.github.io/rumble-charts/) have been used for the graphs.
+	[Rumble charts](https://rumble-charts.github.io/rumble-charts/) have been used for the graphs.
 
 ### Steps to run the application
 
