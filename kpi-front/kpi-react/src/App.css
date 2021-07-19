@@ -1,7 +1,13 @@
 .app {
     padding: 10px;
+    width: 800px;
+    margin: auto;
 }
 
+h1 {
+	font-size: 48px;
+	color: MediumVioletRed;
+}
 
 svg.chart {
     overflow: visible;
@@ -9,4 +15,19 @@ svg.chart {
 
 .chart .tickx path {
     display: none;
+}
+
+.companyArea {
+	padding: 20px 40px;
+	margin: 40px 0px;
+	background-color: papayawhip;
+}
+
+.companyArea h2 {
+	color: tomato;
+	font-size: 32px;
+}
+
+.singleGraphArea {
+    margin: 30px 20px;
 }

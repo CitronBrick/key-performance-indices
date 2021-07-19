@@ -75,10 +75,9 @@ function SingleGraphArea(props) {
     let heading = props.measure.toLowerCase().replace(/_/g,' ');
     heading = heading.charAt(0).toUpperCase() + heading.substring(1);
     let series = [{data: props.series}];
-    console.log(series);
 
     return <div className="singleGraphArea">
-        <DynamicChart type="Bars" width={500} height={200} heading={heading} series={series} yLabel={heading} xLabel="years"   linePadding={10} />        
+        <DynamicChart type={context.graphType} width={500} height={200} heading={heading} series={series} yLabel={heading} xLabel="years"   linePadding={10} />        
     </div>;
 }
 
@@ -127,6 +126,7 @@ function GraphArea(props) {
         <DynamicChart type="Bars" width={500} height={200} heading={comp.name} series={series} xLabel="years" yLabel={measure}  linePadding={10} />        
     </React.Fragment>*/
     return <React.Fragment>
+        <select onChange={(evt)=>context.updateGraphType(evt.target.value)}><option>Bars</option><option>Lines</option></select><br/>
         {companyList}
     </React.Fragment>
 
@@ -184,6 +184,7 @@ function App() {
         token:'',
         username:'',
         statistics: undefined,
+        graphType:'Bars',
         updateCredentials:(token,username)=>{
             sessionStorage.setItem('token',token);
             sessionStorage.setItem('username',username);
@@ -194,6 +195,11 @@ function App() {
         updateStatistics:(statistics)=>setAppInfo((appInfo)=>{
             return {...appInfo,statistics};
         }),
+        updateGraphType:(t)=>{
+            setAppInfo(appInfo=>{
+                return {...appInfo,graphType:t};
+            });   
+        },
         logout:()=>{
             sessionStorage.setItem('token','');
             sessionStorage.setItem('username','');
@@ -210,11 +216,12 @@ function App() {
         if(token && username) {
             appInfo.updateCredentials(token,username )
         }
+        document.title = 'KPI app';
 
     },[]);
 
 
-
+    var logoutButton = <button type="button" onClick={(evt)=>appInfo.logout()}>Logout</button>;
 
 
     return (
@@ -223,7 +230,8 @@ function App() {
                 <AppContext.Provider value={appInfo}>
                     <header>
                         <h1>Key Performance Indicators</h1>
-                        <h4>Welcome {appInfo.username?appInfo.username:'Guest'}</h4>
+                        <h4>Welcome {appInfo.username?appInfo.username:'Guest'} {appInfo.username?logoutButton:''}</h4>
+
                     </header>
                     {!appInfo.username && <LoginForm />}
                     {appInfo.username && <GraphArea username={appInfo.username} /> }
