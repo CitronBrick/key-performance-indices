@@ -25,12 +25,17 @@ public class CompanyRestController {
 
 	@GetMapping("/details")
 	Object getAllCompaniesDetails(HttpServletResponse hres) {
-		/*if(hres.getStatus()==403) {
+		if(hres.getStatus()==403) {
 			return "You are not authorized";
 
-		}*/
+		}
 		return fcs.getCompanies();
 	}	
+
+	@RequestMapping(value="/details",method=RequestMethod.OPTIONS)
+	public String seeOptions() {
+		return "abc";		
+	}
 
 	
 

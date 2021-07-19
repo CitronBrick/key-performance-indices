@@ -18,17 +18,13 @@ public class UserRepository {
 
 	public UserRepository(FakeUserService fus) {
 		this.fus = fus;
-		System.out.println("UserRepository initialized");
 	}
 
 
 	// UserEntity findByEmail(String email);
 	public UserEntity findByEmail(String email) {
-		System.out.println("findByEmail called " + email);
 		List<UserEntity> users = fus.getUsers();
-		System.out.println(users);
 		for(UserEntity ue : users) {
-			System.out.println(ue);
 			if(ue.getEmail().equalsIgnoreCase(email)) {
 				return ue;
 			}

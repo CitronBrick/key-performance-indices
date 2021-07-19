@@ -77,7 +77,8 @@ function GraphArea(props) {
     let [graphData, setGraphData] = React.useState(undefined);
 
     React.useEffect(()=>{
-        fetch(server+'/rest/companies/details').then(res=>res.json()).then(res=>{
+        console.log(context.token);
+        fetch(server+'/rest/companies/details',{headers:{Authorization:context.token}}).then(res=>res.json()).then(res=>{
             console.log(res);
             setGraphData(res);
         }) 
@@ -112,8 +113,7 @@ class LoginForm extends React.Component {
         let body = JSON.stringify({email:this.state.email, password: this.state.password});
         var headers = new Headers({'Content-Type':'application/json','Accept':'text/plain'});
         let req = new Request(server+'/login', {method:'POST',body,headers});
-        fetch(req).then((token)=>{
-            console.log(token);
+        fetch(req).then(res=>res.text()).then((token)=>{
             if(token) {
                 context.updateCredentials(token, this.state.email);
             }
@@ -133,7 +133,6 @@ class LoginForm extends React.Component {
 
         return <AppContext.Consumer>
             {(context)=>{
-                console.log(context);
             return <form className="login-form" onSubmit={(evt)=>{this.handleSubmit(evt,context)}} >
                 <p>Email : <input type="email" placeholder="user@example.com" onChange={this.handleEmailChange} required/></p>
                 <p>Password : <input type="password" onChange={this.handlePasswordChange} required/></p>
@@ -149,15 +148,18 @@ function App() {
     let appInformation = {
         token:'',
         username:'',
+        statistics: undefined,
         updateCredentials:(token,username)=>{
+            console.log(token);
             sessionStorage.setItem('token',token);
             sessionStorage.setItem('username',username);
             setAppInfo({token,username});
         },
+        updateStatistics:(statistics)=>setAppInfo({statistics}),
         logout:()=>{
             sessionStorage.setItem('token','');
             sessionStorage.setItem('username','');
-            setAppInfo({token:'',username:''});
+            setAppInfo({token:'',username:'',statistics:undefined});
         } 
     };
 

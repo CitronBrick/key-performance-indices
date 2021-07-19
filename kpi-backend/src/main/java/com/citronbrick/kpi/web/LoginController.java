@@ -37,7 +37,7 @@ public class LoginController {
 	}	
 
 
-	@RequestMapping(value="/login",method=RequestMethod.OPTIONS)
+	@RequestMapping(value="/**",method=RequestMethod.OPTIONS)
 	public String seeOptions() {
 		return "abc";		
 	}

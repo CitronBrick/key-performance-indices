@@ -25,16 +25,24 @@ public class AuthFilter implements Filter {
 	public void doFilter(ServletRequest sreq, ServletResponse sres, FilterChain chain) throws IOException, ServletException {
 		if(sreq instanceof HttpServletRequest) {
 			HttpServletRequest hreq = (HttpServletRequest)sreq;
-			var token = hreq.getHeader("Authorization");
-			if(tokenService.findUser(token) == null) {
-				HttpServletResponse hres = (HttpServletResponse)sres;
-				hres.setStatus(HttpServletResponse.SC_FORBIDDEN);
-				/*hres.reset();
-				// hres.sendError(403,"You are not authorized !");
-				// throw new NotAuthorizedException();
-				/*PrintWriter pw = sres.getWriter();
-				pw.println("No Authorization");*/
+
+			if(!hreq.getMethod().equals("GET")) {
+				chain.doFilter(sreq,sres);
+			} else {
+				var token = hreq.getHeader("Authorization");
+				System.out.println("Authorization: "+token);
+				System.out.println(tokenService.findUser(token));
+				if(tokenService.findUser(token) == null) {
+					HttpServletResponse hres = (HttpServletResponse)sres;
+					hres.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					/*hres.reset();
+					// hres.sendError(403,"You are not authorized !");
+					// throw new NotAuthorizedException();
+					/*PrintWriter pw = sres.getWriter();
+					pw.println("No Authorization");*/
+				}
 			}
+
 
 		}
 		chain.doFilter(sreq,sres);

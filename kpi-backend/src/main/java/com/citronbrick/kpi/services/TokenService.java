@@ -29,7 +29,6 @@ public class TokenService {
 
 	public String generateToken() {
 		var length = 30 + rand.nextInt(5);
-		System.out.println("tokenLength: " + length);
 		var token = "";
 		do {
 			token = "";
@@ -50,9 +49,7 @@ public class TokenService {
 	public String addUser(String email, String password) {
 		UserEntity ue = userRepository.findByEmail(email);
 		if (ue != null && ue.getPassword().equals(password)) {
-			System.out.println("user is matching");
 			var token = generateToken();
-			System.out.println(token);
 			loggedInUsers.put(token, email);
 			return token;
 		}
@@ -64,8 +61,10 @@ public class TokenService {
 
 	public UserEntity findUser(String token) {
 		String email = null;
+		System.out.println("search for user with " + token);
 		for(Map.Entry<String,String> me : loggedInUsers.entrySet()) {
-			if(me.getKey() == token) {
+			System.out.println(me);
+			if(me.getKey().equals(  token)) {
 				email = me.getValue();
 				break;
 			}
