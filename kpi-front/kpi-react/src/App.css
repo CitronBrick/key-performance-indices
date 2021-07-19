@@ -1,0 +1,12 @@
+.app {
+    padding: 10px;
+}
+
+
+svg.chart {
+    overflow: visible;
+}
+
+.chart .tickx path {
+    display: none;
+}
