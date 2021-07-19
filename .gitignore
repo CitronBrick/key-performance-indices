@@ -5,3 +5,7 @@ target
 *.zip
 *.pptx
 *.mp4
+*.docx
+*.doc
+*.pdf
+presentation
