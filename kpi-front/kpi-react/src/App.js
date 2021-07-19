@@ -69,24 +69,35 @@ class ErrorBoundary extends React.Component {
     }
 }
 
+function CompanyArea(props) {
+    let context = React.useContext(AppContext);
+    console.log(context);
+
+    return <div className="companyArea">
+        <h2></h2>
+    </div>
+}
+
 
 function GraphArea(props) {
 
     let context = React.useContext(AppContext);
 
-    let [graphData, setGraphData] = React.useState(undefined);
+    console.log(context);
+
 
     React.useEffect(()=>{
-        console.log(context.token);
+        console.log(context);
         fetch(server+'/rest/companies/details',{headers:{Authorization:context.token}}).then(res=>res.json()).then(res=>{
             console.log(res);
-            setGraphData(res);
+            console.log(context);
+            context.updateStatistics(res);
         }) 
     }, [context.username]);
 
-    if(!graphData) return <p></p>;
+    if(!context.statistics) return <p></p>;
 
-    let comp = graphData[0];
+    let comp = context.statistics[0];
     let measure = Object.keys(comp.performance)[0];
     let series = Object.entries(comp.performance[measure]).map(pair=>[+pair[0],pair[1]]);
     series = [{data:series}];
@@ -115,6 +126,7 @@ class LoginForm extends React.Component {
         let req = new Request(server+'/login', {method:'POST',body,headers});
         fetch(req).then(res=>res.text()).then((token)=>{
             if(token) {
+                console.log(token,this.state.email);
                 context.updateCredentials(token, this.state.email);
             }
         })
@@ -150,28 +162,41 @@ function App() {
         username:'',
         statistics: undefined,
         updateCredentials:(token,username)=>{
-            console.log(token);
             sessionStorage.setItem('token',token);
             sessionStorage.setItem('username',username);
-            setAppInfo({token,username});
+            console.log('xxx');
+            console.log(token,username);
+            setAppInfo(appInfo=>{
+                console.log({...appInfo,token:token,username:username});
+                return {...appInfo,token:token,username:username};
+            });
         },
-        updateStatistics:(statistics)=>setAppInfo({statistics}),
+        updateStatistics:(statistics)=>setAppInfo((appInfo)=>{
+            return {...appInfo,statistics};
+        }),
         logout:()=>{
             sessionStorage.setItem('token','');
             sessionStorage.setItem('username','');
-            setAppInfo({token:'',username:'',statistics:undefined});
+            setAppInfo({...appInfo,token:'',username:'',statistics:undefined});
         } 
     };
+
 
     let [appInfo,setAppInfo] = React.useState(appInformation) 
 
     React.useEffect(()=>{
         let token = sessionStorage.getItem('token');
         let username = sessionStorage.getItem('username');
+        console.log(appInfo);
         if(token && username) {
             appInfo.updateCredentials(token,username )
         }
-    },[])
+
+    },[]);
+
+
+
+    console.log(appInfo);
 
 
     return (
