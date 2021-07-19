@@ -69,12 +69,32 @@ class ErrorBoundary extends React.Component {
     }
 }
 
+function SingleGraphArea(props) {
+    let context = React.useContext(AppContext);
+
+    let heading = props.measure.toLowerCase().replace(/_/g,' ');
+    heading = heading.charAt(0).toUpperCase() + heading.substring(1);
+    let series = [{data: props.series}];
+    console.log(series);
+
+    return <div className="singleGraphArea">
+        <DynamicChart type="Bars" width={500} height={200} heading={heading} series={series} yLabel={heading} xLabel="years"   linePadding={10} />        
+    </div>;
+}
+
 function CompanyArea(props) {
     let context = React.useContext(AppContext);
-    console.log(context);
+
+
+    let {name,performance} = context.statistics[props.index];
+
+
+
+    let singleGraphList = Object.keys(performance).map((measure,i)=><SingleGraphArea key={measure} measure={measure} series={Object.entries(performance[measure])}  />);
 
     return <div className="companyArea">
-        <h2></h2>
+        <h2>{name}</h2>
+        {singleGraphList}
     </div>
 }
 
@@ -83,14 +103,12 @@ function GraphArea(props) {
 
     let context = React.useContext(AppContext);
 
-    console.log(context);
+    console.log(context.statistics);
 
 
     React.useEffect(()=>{
-        console.log(context);
         fetch(server+'/rest/companies/details',{headers:{Authorization:context.token}}).then(res=>res.json()).then(res=>{
             console.log(res);
-            console.log(context);
             context.updateStatistics(res);
         }) 
     }, [context.username]);
@@ -103,8 +121,13 @@ function GraphArea(props) {
     series = [{data:series}];
     console.log(series);
 
-    return <React.Fragment>
+    var companyList = Array.from(context.statistics,(o,i)=><CompanyArea key={i} index={i} />);
+
+    /*return <React.Fragment>
         <DynamicChart type="Bars" width={500} height={200} heading={comp.name} series={series} xLabel="years" yLabel={measure}  linePadding={10} />        
+    </React.Fragment>*/
+    return <React.Fragment>
+        {companyList}
     </React.Fragment>
 
 }
@@ -164,10 +187,7 @@ function App() {
         updateCredentials:(token,username)=>{
             sessionStorage.setItem('token',token);
             sessionStorage.setItem('username',username);
-            console.log('xxx');
-            console.log(token,username);
             setAppInfo(appInfo=>{
-                console.log({...appInfo,token:token,username:username});
                 return {...appInfo,token:token,username:username};
             });
         },
@@ -187,7 +207,6 @@ function App() {
     React.useEffect(()=>{
         let token = sessionStorage.getItem('token');
         let username = sessionStorage.getItem('username');
-        console.log(appInfo);
         if(token && username) {
             appInfo.updateCredentials(token,username )
         }
@@ -196,7 +215,6 @@ function App() {
 
 
 
-    console.log(appInfo);
 
 
     return (
